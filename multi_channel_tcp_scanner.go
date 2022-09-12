@@ -4,14 +4,12 @@ import (
 	"fmt"
 	"net"
 	"sort"
-    "time"
+	"time"
 )
-
 
 //URL_TO_SCAN :="scanme.nmap.org"
 var URL_TO_SCAN = "127.0.0.1"
 var NB_PORTS = 65535
-
 
 /*
 	The channel will be used to receive work, and the WaitGroup
@@ -32,9 +30,9 @@ func worker(ports chan int, results chan int) {
 }
 
 func main() {
-    start := time.Now()
+	start := time.Now()
 	ports := make(chan int, 100)
-	results := make(chan int)
+	results := make(chan int, 100)
 	var openPorts []int
 
 	for i := 0; i < cap(ports); i++ {
@@ -45,12 +43,18 @@ func main() {
 			ports <- i
 		}
 	}()
-
-	for i := 0; i < NB_PORTS; i++ {
-		port := <-results
-		if port != 0 {
-			openPorts = append(openPorts, port)
-            fmt.Println("open ", port);
+	/*
+		for i := 0; i < NB_PORTS; i++ {
+			port := <-results
+			if port != 0 {
+				openPorts = append(openPorts, port)
+				fmt.Println("open ", port)
+			}
+		}
+	*/
+	for res := range results {
+		if res != 0 {
+			fmt.Println("Open->", res)
 		}
 	}
 	close(ports)
@@ -60,5 +64,5 @@ func main() {
 	for _, port := range openPorts {
 		fmt.Printf("%d open\n", port)
 	}
-    fmt.Println("time since start: ",time.Since(start))
+	fmt.Println("time since start: ", time.Since(start))
 }
