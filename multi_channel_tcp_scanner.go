@@ -43,26 +43,20 @@ func main() {
 			ports <- i
 		}
 	}()
-	/*
-		for i := 0; i < NB_PORTS; i++ {
-			port := <-results
-			if port != 0 {
-				openPorts = append(openPorts, port)
-				fmt.Println("open ", port)
-			}
-		}
-	*/
-	for res := range results {
-		if res != 0 {
-			fmt.Println("Open->", res)
+	for i := 0; i < NB_PORTS; i++ {
+		port := <-results
+		if port != 0 {
+			openPorts = append(openPorts, port)
+			fmt.Printf("%d open\n", port)
 		}
 	}
 	close(ports)
 	close(results)
 	sort.Ints(openPorts)
-
-	for _, port := range openPorts {
-		fmt.Printf("%d open\n", port)
-	}
+	/*
+		for _, port := range openPorts {
+			fmt.Printf("%d open\n", port)
+		}
+	*/
 	fmt.Println("time since start: ", time.Since(start))
 }
